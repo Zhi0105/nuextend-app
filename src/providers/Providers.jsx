@@ -1,9 +1,14 @@
-import { Text, View } from "react-native"
+import React from "react";
+import { Routes } from "@_navigation/Routes"
+import { NavigationContainer, useNavigationContainerRef } from "@react-navigation/native"
 
 export const Providers = () => {
-  return (
-    <View className="min-h-screen flex justify-center items-center">
-      <Text className="text-2xl font-bold text-blue-400">Hello from Nuextend!</Text>
-    </View>
-  )
+    const navigationRef = useNavigationContainerRef();
+    return ( 
+      <React.Fragment>
+        <NavigationContainer ref={navigationRef}>
+          <Routes />
+        </NavigationContainer>
+      </React.Fragment>
+    )
 }
