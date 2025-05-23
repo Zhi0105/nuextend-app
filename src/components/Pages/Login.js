@@ -1,13 +1,13 @@
-import React, { useState, useContext, useCallback } from 'react'
+import React, { useState, useContext } from 'react'
 import { Text, View, TextInput, TouchableOpacity } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
-// import { AuthContext } from '@_context/AuthContext';
+import { AuthContext } from '@_context/AuthContext';
 import FastImage from 'react-native-fast-image'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export const Login = ({ navigation }) => {
-    const [isPasswordVisible, setisPasswordVisible] = useState(false);
-    // const { login, loginLoading } = useContext(AuthContext)
+    const [isPasswordVisible, setisPasswordVisible] = useState(true);
+    const { login, loginLoading } = useContext(AuthContext)
 
     const {
         handleSubmit,
@@ -22,7 +22,7 @@ export const Login = ({ navigation }) => {
 
     
     const onSubmit = (data) => {
-        console.log(data)
+        login(data)
     };
 
     return (
@@ -95,11 +95,9 @@ export const Login = ({ navigation }) => {
                         <TouchableOpacity 
                             className="w-full text-gray-900 bg-white flex justify-center items-center cursor-pointer hover:bg-gray-300 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                             onPress={handleSubmit(onSubmit)}
-                            // disabled={loginLoading}              
+                            disabled={loginLoading}              
                         >
-                            {/* <Text>{loginLoading ? "Please wait..." : "Login"}</Text> */}
-                            <Text>Login</Text>
-
+                            <Text>{loginLoading ? "Please wait..." : "Login"}</Text>
                         </TouchableOpacity>
 
                         <View className="flex-row justify-center items-center">
