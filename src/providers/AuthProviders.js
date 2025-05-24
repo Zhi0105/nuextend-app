@@ -46,7 +46,7 @@ export const AuthProviders = ({ children }) => {
   const { mutate: handleRegister, isLoading: registerLoading } = useMutation({
     mutationFn: Register,
     onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: ['register'] });
+      queryClient.invalidateQueries({ queryKey: ['register'] });
         showMessage({
             message: "New user created",
             type: 'success',
