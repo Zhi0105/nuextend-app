@@ -15,14 +15,13 @@ export const AuthProviders = ({ children }) => {
   const { setUser, setToken, setUserLogout } = useUserStore((state) => ({
     setUser: state.setUser,
     setToken: state.setToken,
-    // setUserLogout: state.setUserLogout
+    setUserLogout: state.setUserLogout
   }));
 
 
   const { mutate: handleLoginUser, isLoading: loginLoading } = useMutation({
     mutationFn: Login,
     onSuccess: (data) => {
-        console.log(data)
         queryClient.invalidateQueries({ queryKey: ['login'] });
         showMessage({
             message: "Login success",
@@ -31,7 +30,7 @@ export const AuthProviders = ({ children }) => {
             floating: true,
             position: 'top',
         })
-        // authenticate(data.access_token)
+        authenticate(data)
       }, 
     onError: (err) => {  
         showMessage({
@@ -55,8 +54,7 @@ export const AuthProviders = ({ children }) => {
             floating: true,
             position: 'top',
         })
-        console.log(data)
-        // authenticate(data.access_token)
+        authenticate(data)
       }, 
     onError: (err) => {  
       showMessage({
@@ -74,36 +72,31 @@ export const AuthProviders = ({ children }) => {
     handleRegister(data)
   }
 
-//   const login = (data) => {
-//     handleLoginUser(data)
-//   }
-
   const authenticate = async(user) => {
-    // navigation.reset({
-    //   index: 0,
-    //   routes: [{ name: 'Account' }],
-    // });
-    // const userdetails = await GetUser(user)
-    // userdetails && setUser(userdetails)
-    // setToken(user)
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Account' }],
+    });
+    setUser(user?.data)
+    setToken(user?.token)
 
   }
 
-//   const logout = () => {
-//     setUserLogout()
-//     navigation.reset({
-//       index: 0,
-//       routes: [{ name: 'Login' }],
-//     });
-//     showMessage({
-//       message: "Logout success",
-//       type: 'success',
-//       duration: 1000,
-//       floating: true,
-//       position: 'top',
-//     })
-//     logout_debounce()
-//   }
+  const logout = () => {
+    setUserLogout()
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
+    showMessage({
+      message: "Logout success",
+      type: 'success',
+      duration: 1000,
+      floating: true,
+      position: 'top',
+    })
+    // logout_debounce()
+  }
 
   
   return (
@@ -114,7 +107,7 @@ export const AuthProviders = ({ children }) => {
         login: (data) => { handleLoginUser(data) },
         loginLoading: loginLoading,
         // authenticate: (user) => { authenticate(user) },
-        // logout: () => { logout() },
+        logout: () => { logout() },
       }}
     >
       {children}
