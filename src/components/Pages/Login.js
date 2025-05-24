@@ -35,7 +35,7 @@ export const Login = ({ navigation }) => {
                     resizeMode={FastImage.resizeMode.contain}
                 />
                 
-                <Text>Login to participate in projects</Text>
+                <Text className='text-black'>Login to participate in projects</Text>
                 <View className="form-container w-full p-6 space-y-4 form_container md:space-y-6 sm:p-8">
                     <View className="space-y-4 form md:space-y-6 gap-4">
 
@@ -48,8 +48,9 @@ export const Login = ({ navigation }) => {
                             }}
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <TextInput
-                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                className="border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                 placeholder="Enter your NU email or email"
+                                placeholderTextColor="#6b7280"
                                 onBlur={onBlur}
                                 onChangeText={onChange}
                                 value={value}
@@ -71,9 +72,10 @@ export const Login = ({ navigation }) => {
                                 render={({ field: { onChange, onBlur, value } }) => (
                                     <View>
                                     <TextInput
-                                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                        className="border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                         secureTextEntry={isPasswordVisible}
                                         placeholder="password"
+                                        placeholderTextColor="#6b7280"
                                         onBlur={onBlur}
                                         onChangeText={onChange}
                                         value={value}
@@ -97,11 +99,11 @@ export const Login = ({ navigation }) => {
                             onPress={handleSubmit(onSubmit)}
                             disabled={loginLoading}              
                         >
-                            <Text>{loginLoading ? "Please wait..." : "Login"}</Text>
+                            <Text className='text-black'>{loginLoading ? "Please wait..." : "Login"}</Text>
                         </TouchableOpacity>
 
                         <View className="flex-row justify-center items-center">
-                            <Text>Don't have an account? </Text>
+                            <Text className='text-black'>Don't have an account? </Text>
                             <TouchableOpacity className="p-2" onPress={() => navigation.navigate('Register')}>
                                 <Text className="text-[#364190]">Sign up</Text>
                             </TouchableOpacity>
