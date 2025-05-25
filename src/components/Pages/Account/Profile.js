@@ -117,10 +117,6 @@ export const Profile = () => {
         }
     }, [user, skillData, setValue]);
 
-    useEffect(() => {
-        console.log(user)
-    }, [user])
-
     return (
         <View className="profile-main min-h-screen w-full p-6 space-y-4">
             <View className="space-y-4 form md:space-y-6 flex-col gap-4">

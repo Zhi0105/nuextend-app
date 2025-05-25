@@ -2,6 +2,7 @@ import React from "react"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
 import { DashboardScreen } from "@_screens/Dashboard/DashboardScreen"
+import { EventDetailScreen } from "@_screens/Dashboard/Home/EventDetailScreen"
 
 export const DashboardStack = () => {
     const Stack = createNativeStackNavigator()
@@ -14,7 +15,13 @@ export const DashboardStack = () => {
             <Stack.Screen  
                 name="Dashboard" component={DashboardScreen} 
                 options={{
-                animation:'slide_from_right'
+                    animation:'slide_from_right'
+                }}
+            />
+            <Stack.Screen  
+                name="Event" component={EventDetailScreen} 
+                options={{
+                    animation:'slide_from_right'
                 }}
             />
         </Stack.Navigator>    
