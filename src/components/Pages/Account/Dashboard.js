@@ -1,15 +1,25 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Text, View, TextInput } from "react-native";
 import useUserStore from "@_stores/auth";
+import useEventStore from '@_stores/event'
 import { useHeaderHeight } from "@react-navigation/elements";
 import { getEvents } from "@_services/event";
+import { getParticipantEvents } from "@_services/participant";
 import { Card, List } from "@ui-kitten/components";
 import _ from "lodash";
 
 export const Dashboard = ({ navigation }) => {
     const headerHeight = useHeaderHeight();
-    const { token } = useUserStore((state) => ({ token: state.token }));
+    const { user, token } = useUserStore((state) => ({ user: state.user, token: state.token }));
+    const { setUpcoming } = useEventStore((state) => ({ setUpcoming: state.setUpcoming }));
     const { data: eventData, isLoading: eventLoading } = getEvents({ token });
+    const { 
+        data: participantEventData, 
+        isLoading: participantEventLoading, 
+        refetch: participantEventRefetch, 
+        isRefetching: partcipantEventRefetching
+    } = getParticipantEvents(user.id);
+
     const [searchQuery, setSearchQuery] = useState("");
 
     const events = useMemo(() => {
@@ -30,7 +40,15 @@ export const Dashboard = ({ navigation }) => {
         </Text>
     );
 
-    if (eventLoading) {
+    useEffect(() => {
+        participantEventRefetch()
+    }, [user])
+
+    useEffect(() => {
+        participantEventData && setUpcoming(participantEventData?.upcoming_events)
+    }, [participantEventData])
+
+    if (eventLoading || participantEventLoading || partcipantEventRefetching) {
         return (
             <View className="flex-1 justify-center items-center">
                 <Text>Event Loading...</Text>

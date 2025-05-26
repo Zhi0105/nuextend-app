@@ -7,7 +7,6 @@ import { Controller, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { UpdateUser } from '@_services/authentications';
 import { showMessage } from "react-native-flash-message";
-
 import { getDepartments } from "@_src/services/department";
 import { getPrograms } from '@_services/program';
 import { getSkills } from '@_services/skill';
