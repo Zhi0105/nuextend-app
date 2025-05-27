@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import useEventStore from '@_stores/event'
 import { useHeaderHeight } from "@react-navigation/elements";
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Image } from 'react-native'
 import { Card, List , Modal } from "@ui-kitten/components";
+import RNQRGenerator from 'rn-qr-generator';
 import dayjs from 'dayjs';
 
 
@@ -11,10 +12,8 @@ export const Event = ({ navigation }) => {
     const { upcoming } = useEventStore((state) => ({ upcoming: state.upcoming }));
     const [visible, setVisible] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
-
-    useEffect(() => {
-        console.log(upcoming)
-    }, [upcoming])
+    const [qrUri, setQrUri] = useState(null);
+    const [qrVisible, setQrVisible] = useState(false);
 
 
     const setFormatDate = (date) => {
@@ -24,6 +23,22 @@ export const Event = ({ navigation }) => {
             ? parsedDate.format('MMMM D, YYYY')
             : 'Invalid Date';
     };
+
+    
+    const handleGenerateQR = () => {
+        RNQRGenerator.generate({
+            value: 'Hello world',
+            height: 100,
+            width: 100,
+        })
+        .then(response => {
+            const { uri } = response;
+            setQrUri(uri);
+            setQrVisible(true);
+        })
+        .catch(error => console.log('Cannot create QR code', error));
+    }
+
     return (
         <View className="event-main min-h-screen flex-1 py-4 items-center bg-white">
             <Modal
@@ -58,6 +73,35 @@ export const Event = ({ navigation }) => {
                     </TouchableOpacity>
                 </Card>
             </Modal>
+
+            <Modal
+                visible={qrVisible}
+                backdropStyle={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                }}
+                onBackdropPress={() => {
+                    setQrVisible(false);
+                    setQrUri(null);
+                }}
+            >
+                <Card disabled={true} style={{ alignItems: 'center' }}>
+                    <Text className='text-2xl font-bold mb-2'>Your QR Code</Text>
+                    {qrUri && (
+                        <Image
+                            source={{ uri: qrUri }}
+                            style={{ width: 200, height: 200 }}
+                            resizeMode='contain'
+                        />
+                    )}
+                    <TouchableOpacity
+                        onPress={() => setQrVisible(false)}
+                        className='bg-[#364190] p-2 rounded mt-4'
+                    >
+                        <Text className='text-white text-center font-bold'>OK</Text>
+                    </TouchableOpacity>
+                </Card>
+            </Modal>
+
             <List
                 className="min-h-full w-full"
                 contentContainerStyle={{
@@ -83,6 +127,7 @@ export const Event = ({ navigation }) => {
                                     <Text className='text-white font-bold'>View</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
+                                    onPress={handleGenerateQR}
                                     className='bg-[#364190] p-2 rounded'
                                 >
                                     <Text className='text-white font-bold'>Generate QR</Text>
