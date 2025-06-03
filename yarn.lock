@@ -7831,6 +7831,11 @@ react-is@^19.1.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-19.1.0.tgz#805bce321546b7e14c084989c77022351bbdd11b"
   integrity sha512-Oe56aUPnkHyyDxxkvqtd7KkdQP5uIUfHxd5XTb3wE9d/kRnZLmKbDB0GWk919tdQ+mxxPtG6EAs6RMT6i1qtHg==
 
+react-native-camera-kit@^15.0.1:
+  version "15.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-camera-kit/-/react-native-camera-kit-15.0.1.tgz#3d1e861fd6f87450b27744b02e9659b8e643a6a4"
+  integrity sha512-JAa/2m73vKRp9oJ6ynYDr2KIIbglUbXYmDmsUrxLdk820eMGfxlb2HukqmVrkwt9KgX5vlBWoDHys3dhmrqa/w==
+
 react-native-config@1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/react-native-config/-/react-native-config-1.5.0.tgz#ff5a78fbbc2c2a0525788e5f3c86101110651ba4"

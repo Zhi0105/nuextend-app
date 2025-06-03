@@ -42,7 +42,7 @@ export const Dashboard = ({ navigation }) => {
 
     useEffect(() => {
         participantEventRefetch()
-    }, [user])
+    }, [])
 
     useEffect(() => {
         participantEventData && setUpcoming(participantEventData?.upcoming_events)

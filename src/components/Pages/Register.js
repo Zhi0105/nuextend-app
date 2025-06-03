@@ -44,7 +44,7 @@ export const Register = ({ navigation }) => {
     useEffect(() => {
         const deptId = departmentData?.data[selectedDept?.row]?.id;
         if (deptId && programData?.data) {
-            const filtered = _.filter(programData.data, p => p.department_id === deptId);
+            const filtered = _.filter(programData?.data, p => p.department_id === deptId);
             setFilteredPrograms(filtered);
         }
     }, [selectedDept, programData, departmentData]);
@@ -52,7 +52,7 @@ export const Register = ({ navigation }) => {
     useEffect(() => {
         if(!roleLoading) {
             const includeItems = [2, 3, 4, 5]
-            const filteredRoles = _.filter(roleData.data, role => includeItems.includes(role.id))
+            const filteredRoles = _.filter(roleData?.data, role => includeItems.includes(role.id))
             setRoles(filteredRoles)
         }
     }, [roleData, roleLoading])
