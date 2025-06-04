@@ -61,30 +61,30 @@ export const EventDetail = ({ route, navigation }) => {
             className="w-full event-detail-main min-h-screen flex-1 py-4 items-center bg-white px-4"
         >
             <Card className='w-full px-4'>
-                <Text className='text-2xl font-bold'>
+                <Text className='text-gray-500 text-2xl font-bold'>
                     Event Details:
                 </Text>
 
                 <View className='detail flex-col gap-2 mt-4'>
                     <View className='flex-row gap-2 px-4'>
-                        <Text className='text-lg font-bold'>Name:</Text>
-                        <Text className='break-normal text-lg capitalize'>{event?.name}</Text>
+                        <Text className='text-black text-lg font-bold'>Name:</Text>
+                        <Text className='text-black break-normal text-lg capitalize'>{event?.name}</Text>
                     </View>
                     <View className='flex-row gap-2 px-4'>
-                        <Text className='text-lg font-bold'>Start date:</Text>
-                        <Text className='break-normal text-lg'>{setFormatDate(event?.start_date)}</Text>
+                        <Text className='text-black text-lg font-bold'>Start date:</Text>
+                        <Text className='text-black break-normal text-lg'>{setFormatDate(event?.start_date)}</Text>
                     </View>
                     <View className='flex-row gap-2 px-4'>
-                        <Text className='text-lg font-bold'>End date:</Text>
-                        <Text className='break-normal text-lg'>{setFormatDate(event?.end_date)}</Text>
+                        <Text className='text-black text-lg font-bold'>End date:</Text>
+                        <Text className='text-black break-normal text-lg'>{setFormatDate(event?.end_date)}</Text>
                     </View>
                     <View className='flex-row gap-2 px-4'>
-                        <Text className='text-lg font-bold'>Address:</Text>
-                        <Text className='break-normal text-lg capitalize'>{event?.address}</Text>
+                        <Text className='text-black text-lg font-bold'>Address:</Text>
+                        <Text className='text-black break-normal text-lg capitalize'>{event?.address}</Text>
                     </View>
                     <View className='flex-col gap-2 px-4'>
-                        <Text className='text-lg font-bold'>Description:</Text>
-                        <Text className='text-lg capitalize'>{event?.description}</Text>
+                        <Text className='text-black text-lg font-bold'>Description:</Text>
+                        <Text className='text-black text-lg capitalize'>{event?.description}</Text>
                     </View>
                     <TouchableOpacity
                         disabled={joinEventLoading}

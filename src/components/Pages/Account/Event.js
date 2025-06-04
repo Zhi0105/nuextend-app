@@ -49,21 +49,21 @@ export const Event = ({ navigation }) => {
                 onBackdropPress={() => setVisible(false)}
             >
                 <Card disabled={true}>
-                    <Text className='text-2xl font-bold'>
+                    <Text className='text-gray-400 text-2xl font-bold'>
                         Event Details:
                     </Text>
                 
                     <View className='flex-row gap-2 px-4'>
-                        <Text className='text-lg font-bold'>Name:</Text>
-                        <Text className='break-normal text-lg capitalize'>{selectedEvent?.name}</Text>
+                        <Text className='text-black text-lg font-bold'>Name:</Text>
+                        <Text className='text-black break-normal text-lg capitalize'>{selectedEvent?.name}</Text>
                     </View>
                     <View className='flex-row gap-2 px-4'>
-                        <Text className='text-lg font-bold'>Start date:</Text>
-                        <Text className='break-normal text-lg'>{setFormatDate(selectedEvent?.start_date)}</Text>
+                        <Text className='text-black text-lg font-bold'>Start date:</Text>
+                        <Text className='text-black break-normal text-lg'>{setFormatDate(selectedEvent?.start_date)}</Text>
                     </View>
                     <View className='flex-row gap-2 px-4'>
-                        <Text className='text-lg font-bold'>End date:</Text>
-                        <Text className='break-normal text-lg'>{setFormatDate(selectedEvent?.end_date)}</Text>
+                        <Text className='text-black text-lg font-bold'>End date:</Text>
+                        <Text className='text-black break-normal text-lg'>{setFormatDate(selectedEvent?.end_date)}</Text>
                     </View>
                     <TouchableOpacity
                         onPress={() => setVisible(false)}
@@ -85,7 +85,7 @@ export const Event = ({ navigation }) => {
                 }}
             >
                 <Card disabled={true} style={{ alignItems: 'center' }}>
-                    <Text className='text-2xl font-bold mb-2'>Your QR Code</Text>
+                    <Text className='text-gray-500 text-2xl font-bold mb-2'>Your QR Code</Text>
                     {qrUri && (
                         <Image
                             source={{ uri: qrUri }}
@@ -115,7 +115,7 @@ export const Event = ({ navigation }) => {
                         status="basic"
                     >
                         <View className='flex-row gap-2 justify-between items-center'>
-                            <Text className='capitalize'>{item?.event.name}</Text>
+                            <Text className='text-black capitalize'>{item?.event.name}</Text>
                             <View className='flex-row gap-2'>
                                 <TouchableOpacity
                                     onPress={() => {

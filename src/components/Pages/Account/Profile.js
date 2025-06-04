@@ -122,7 +122,7 @@ export const Profile = () => {
                 {!( user?.role_id === 2 || user?.role_id === 5 ) && (
                     <>
                         <View className='department'>
-                            <Text className='mb-2 text-lg font-bold'>Department:</Text>
+                            <Text className='text-black mb-2 text-lg font-bold'>Department:</Text>
                             {isUpdate ? (
                                 <Controller
                                 control={control}
@@ -145,7 +145,7 @@ export const Profile = () => {
                                             }}
                                         >
                                             {departmentData?.data.map((d) => (
-                                            <SelectItem key={d.id} title={d.name} />
+                                            <SelectItem className='text-black' key={d.id} title={d.name} />
                                             ))}
                                         </Select>
                                     </Layout>
@@ -153,14 +153,14 @@ export const Profile = () => {
                                 name="department"
                                 />
                             ) : (
-                                <Text className='pl-4'>{departmentData?.data.find(d => d.id === user.department_id)?.name || 'N/A'}</Text>
+                                <Text className='text-black pl-4'>{departmentData?.data.find(d => d.id === user.department_id)?.name || 'N/A'}</Text>
                             )}
                             {errors.department && (
                                 <Text className="text-sm text-red-400 indent-2">Please select your department*</Text>
                             )}
                         </View>
                         <View className='program'>
-                            <Text className='mb-2 text-lg font-bold'>Program:</Text>
+                            <Text className='text-black mb-2 text-lg font-bold'>Program:</Text>
                             {isUpdate ? (
                                 <Controller
                                 control={control}
@@ -176,7 +176,7 @@ export const Profile = () => {
                                         }}
                                     >
                                         {filteredPrograms.map((p) => (
-                                        <SelectItem key={p.id} title={p.name} />
+                                        <SelectItem className='text-black' key={p.id} title={p.name} />
                                         ))}
                                     </Select>
                                     </Layout>
@@ -184,7 +184,7 @@ export const Profile = () => {
                                 name="program"
                                 />
                             ) : (
-                                <Text className='pl-4'>{programData?.data.find(p => p.id === user.program_id)?.name || 'N/A'}</Text>
+                                <Text className='text-black pl-4'>{programData?.data.find(p => p.id === user.program_id)?.name || 'N/A'}</Text>
                             )}
                             {errors.program && (
                                 <Text className="text-sm text-red-400 indent-2">Please select your program*</Text>
@@ -193,7 +193,7 @@ export const Profile = () => {
                     </>
                 )}
                 <View className='skills'>
-                    <Text className='mt-2 text-lg font-bold'>Skills:</Text>
+                    <Text className='text-black mt-2 text-lg font-bold'>Skills:</Text>
                     {isUpdate ? (
                         <Controller
                         control={control}
@@ -229,7 +229,7 @@ export const Profile = () => {
                         }}
                         />
                     ) : (
-                        <Text className='pl-4'>
+                        <Text className='text-black pl-4'>
                         {user?.skill?.map((s) => s.name).join(', ') || 'N/A'}
                         </Text>
                     )}

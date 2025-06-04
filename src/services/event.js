@@ -15,6 +15,7 @@ export const getEvents = (payload) => {
         },
         staleTime: 5 * 60000,
         refetchOnWindowFocus: true,
+        enabled: !!payload?.token
     });
 
 }
