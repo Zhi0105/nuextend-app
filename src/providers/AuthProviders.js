@@ -72,7 +72,7 @@ export const AuthProviders = ({ children }) => {
     handleRegister(data)
   }
 
-  const authenticate = async(user) => {
+  const authenticate = async(user) => {    
     navigation.reset({
       index: 0,
       routes: [{ name: 'Account' }],

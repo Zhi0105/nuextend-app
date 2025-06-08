@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes } from "@_navigation/Routes"
+import { Linking } from "react-native";
 import { NavigationContainer, useNavigationContainerRef } from "@react-navigation/native"
 import FlashMessage from 'react-native-flash-message'
 
@@ -9,11 +10,21 @@ import { AuthProviders } from "./AuthProviders";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as eva from '@eva-design/eva';
 
+const linking = {
+  prefixes: ['nuextend://'],
+  config: {
+    screens: {
+      EmailVerified: 'email-verified',
+      EmailError: 'email-verified-error'
+    }
+  }
+};
+
 export const Providers = () => {
     const navigationRef = useNavigationContainerRef();
     return ( 
       <React.Fragment>
-        <NavigationContainer ref={navigationRef}>
+        <NavigationContainer ref={navigationRef} linking={linking}>
           <ApplicationProvider {...eva} theme={eva.light}>
             <TanstackProviders>
               <AuthProviders>

@@ -21,9 +21,19 @@
         android:launchMode="singleTask"
         android:windowSoftInputMode="adjustResize"
         android:exported="true">
+
+        <!-- 🚀 MAIN launcher intent (required to open app from home screen) -->
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+
+        <!-- 🔗 Deep link intent (required to handle nuextend://email-verified) -->
+        <intent-filter android:label="email-verify">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="nuextend" android:host="email-verified" />
         </intent-filter>
       </activity>
     </application>

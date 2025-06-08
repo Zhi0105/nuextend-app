@@ -6,6 +6,7 @@ import { Card, List , Modal } from "@ui-kitten/components";
 import RNQRGenerator from 'rn-qr-generator';
 import dayjs from 'dayjs';
 
+import { EmailSendLinkScreen } from '@_screens/Dashboard/Email/EmailSendLinkScreen';
 
 export const Event = ({ navigation }) => {
     const headerHeight = useHeaderHeight();
@@ -37,6 +38,14 @@ export const Event = ({ navigation }) => {
             setQrVisible(true);
         })
         .catch(error => console.log('Cannot create QR code', error));
+    }
+
+    if(!upcoming?.length) {
+        return (
+            <View className="event-main min-h-screen flex-1 py-4 items-center bg-white">
+                <Text>No upcoming events.</Text>
+            </View>
+        )
     }
 
     return (
