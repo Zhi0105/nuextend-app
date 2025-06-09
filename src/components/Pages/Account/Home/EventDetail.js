@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import useUserStore from '@_stores/auth';
 import useEventStore from '@_stores/event';
 import { Text, View, TouchableOpacity } from 'react-native'
@@ -8,6 +8,7 @@ import { showMessage } from "react-native-flash-message";
 import { storeParticipant } from '@_services/participant';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 
 export const EventDetail = ({ route, navigation }) => {
     dayjs.extend(customParseFormat);
@@ -87,9 +88,9 @@ export const EventDetail = ({ route, navigation }) => {
                         <Text className='text-black text-lg capitalize'>{event?.description}</Text>
                     </View>
                     <TouchableOpacity
-                        disabled={joinEventLoading}
+                        disabled={joinEventLoading || _.some(user.organizations, { id: event?.organization_id })}
                         onPress={joinEvent} 
-                        className='w-full bg-[#364190] p-2 rounded-sm'
+                        className={` ${ joinEventLoading || _.some(user.organizations, { id: event?.organization_id }) ? "bg-gray-400" : 'bg-[#364190]'} w-full p-2 rounded-sm`}
                     >
                         <Text className='text-center text-white'>
                             {joinEventLoading ? "Please wait..." : "Join"}  
