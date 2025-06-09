@@ -2,10 +2,10 @@ import { apiClient } from "@_src/http-commons";
 
 export const Register = async(payload) => {
     const data = {
-        ...(payload.department?.id && { department_id: payload.department.id }),
-        ...(payload.program?.id && { program_id: payload.program.id }),
+        ...(payload.department && { department_id: payload.department }),
+        ...(payload.program && { program_id: payload.program }),
         role_id: payload?.role,
-        ...(payload.school_id && { school_id: payload.school_id }),
+        ...(payload.schoolID && { school_id: payload.schoolID }),
         firstname: payload.firstname,
         middlename: payload.middlename,
         lastname: payload.lastname,
