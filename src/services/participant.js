@@ -28,3 +28,18 @@ export const getParticipantEvents = (user_id) => {
         refetchOnWindowFocus: true,
     })
 }
+export const signAttendance = (payload) => {
+    const { participant_id, token } = payload
+    const headers = {
+        Authorization: `Bearer ${token}`
+    }
+    const data = {
+        participant_id
+    }
+
+    const result = apiClient.post(`api/v1/participant/attendance`, data, { headers }).then(res => {
+        return res.data
+    })
+
+    return result
+}

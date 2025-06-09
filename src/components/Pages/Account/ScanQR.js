@@ -1,15 +1,74 @@
 import React, { useState } from "react";
-import {  View } from "react-native";
+import useUserStore from '@_stores/auth';
+import {  View, Text } from "react-native";
 import { Camera, CameraType } from 'react-native-camera-kit';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { signAttendance } from "@_services/participant";
 
 export const ScanQR = () => {
   const [qrValue, setQrValue] = useState("");
+  const queryClient = useQueryClient();
+  const { token } = useUserStore((state) => ({ token: state.token }));
+
+  const { mutate: handleAttendance } = useMutation({
+    mutationFn: signAttendance,
+        onSuccess: (data) => {
+            console.log(data)
+            queryClient.invalidateQueries({ queryKey: ['mark-attendance'] });
+            showMessage({
+              message: "attendance signed",
+              type: 'success',
+              duration: 1000,
+              floating: true,
+              position: 'top',
+          })
+        }, 
+        onError: (err) => {  
+        showMessage({
+            message: err.response.data.message,
+            type: 'warning',
+            duration: 1000,
+            floating: true,
+            position: 'top',
+        })
+    },
+  });
+
 
   const handleQRCodeRead = (event) => {
     const code = event.nativeEvent.codeStringValue;
 
     if (code !== qrValue) {
       setQrValue(code);
+      console.log('QR Code Scanned:', code);
+
+      try {
+        const parsed = JSON.parse(code);
+
+        if (parsed?.participant_id) {
+          handleAttendance({
+            token,
+            participant_id: parsed.participant_id
+          });
+        } else {
+          showMessage({
+            message: 'Invalid QR Code',
+            type: 'danger',
+            duration: 1000,
+            floating: true,
+            position: 'top',
+          });
+        }
+      } catch (e) {
+        console.error('QR Code Parsing Error:', e);
+        showMessage({
+          message: 'Invalid QR Code Format',
+          type: 'danger',
+          duration: 1000,
+          floating: true,
+          position: 'top',
+        });
+      }
     }
   };
 

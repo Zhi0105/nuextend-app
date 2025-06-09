@@ -6,7 +6,6 @@ import { Card, List , Modal } from "@ui-kitten/components";
 import RNQRGenerator from 'rn-qr-generator';
 import dayjs from 'dayjs';
 
-import { EmailSendLinkScreen } from '@_screens/Dashboard/Email/EmailSendLinkScreen';
 
 export const Event = ({ navigation }) => {
     const headerHeight = useHeaderHeight();
@@ -26,9 +25,11 @@ export const Event = ({ navigation }) => {
     };
 
     
-    const handleGenerateQR = () => {
+    const handleGenerateQR = (participant) => {
         RNQRGenerator.generate({
-            value: 'Hello world',
+            value: `${JSON.stringify({
+                participant_id: participant?.id
+            })}`,
             height: 100,
             width: 100,
         })
@@ -40,6 +41,7 @@ export const Event = ({ navigation }) => {
         .catch(error => console.log('Cannot create QR code', error));
     }
 
+    
     if(!upcoming?.length) {
         return (
             <View className="event-main min-h-screen flex-1 py-4 items-center bg-white">
@@ -48,6 +50,7 @@ export const Event = ({ navigation }) => {
         )
     }
 
+    
     return (
         <View className="event-main min-h-screen flex-1 py-4 items-center bg-white">
             <Modal
@@ -136,7 +139,7 @@ export const Event = ({ navigation }) => {
                                     <Text className='text-white font-bold'>View</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    onPress={handleGenerateQR}
+                                    onPress={() => handleGenerateQR(item)}
                                     className='bg-[#364190] p-2 rounded'
                                 >
                                     <Text className='text-white font-bold'>Generate QR</Text>
