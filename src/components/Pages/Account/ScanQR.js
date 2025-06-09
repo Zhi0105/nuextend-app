@@ -4,6 +4,7 @@ import {  View, Text } from "react-native";
 import { Camera, CameraType } from 'react-native-camera-kit';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { signAttendance } from "@_services/participant";
+import { showMessage } from "react-native-flash-message";
 
 export const ScanQR = () => {
   const [qrValue, setQrValue] = useState("");
@@ -41,34 +42,28 @@ export const ScanQR = () => {
     if (code !== qrValue) {
       setQrValue(code);
       console.log('QR Code Scanned:', code);
+      const parsed = JSON.parse(code);
+      handleAttendance({
+        token,
+        participant_id: parsed.participant_id
+      })
 
-      try {
-        const parsed = JSON.parse(code);
-
-        if (parsed?.participant_id) {
-          handleAttendance({
-            token,
-            participant_id: parsed.participant_id
-          });
-        } else {
-          showMessage({
-            message: 'Invalid QR Code',
-            type: 'danger',
-            duration: 1000,
-            floating: true,
-            position: 'top',
-          });
-        }
-      } catch (e) {
-        console.error('QR Code Parsing Error:', e);
-        showMessage({
-          message: 'Invalid QR Code Format',
-          type: 'danger',
-          duration: 1000,
-          floating: true,
-          position: 'top',
-        });
-      }
+        // const parsed = JSON.parse(code);
+        // if (parsed?.participant_id) {
+        //   handleAttendance({
+        //     token,
+        //     participant_id: parsed.participant_id
+        //   });
+        // } else {
+        //   showMessage({
+        //     message: 'Invalid QR Code',
+        //     type: 'danger',
+        //     duration: 1000,
+        //     floating: true,
+        //     position: 'top',
+        //   });
+        // }
+      
     }
   };
 
