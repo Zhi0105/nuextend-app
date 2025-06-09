@@ -119,6 +119,18 @@ export const Profile = () => {
     return (
         <View className="profile-main min-h-screen w-full p-6 space-y-4">
             <View className="space-y-4 form md:space-y-6 flex-col gap-4">
+                <View className='School-ID'>
+                    <Text className='text-black mt-2 text-lg font-bold'>School-ID:</Text>
+                    <Text className='text-black'>{user?.school_id}</Text>
+                </View>
+                <View className='Name'>
+                    <Text className='text-black mt-2 text-lg font-bold'>Name:</Text>
+                    <Text className='text-black'>{user?.lastname}, {user?.firstname} {user?.middlename}</Text>
+                </View>
+                <View className='Email'>
+                    <Text className='text-black mt-2 text-lg font-bold'>Email:</Text>
+                    <Text className='text-black'>{user?.email}</Text>
+                </View>
                 {!( user?.role_id === 2 || user?.role_id === 5 ) && (
                     <>
                         <View className='department'>

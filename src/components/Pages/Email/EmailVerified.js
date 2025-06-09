@@ -9,8 +9,8 @@ export const EmailVerified = ({ navigation }) => {
             marginTop: -headerHeight
         }} className="email-verified-main min-h-screen flex-1 py-4 justify-center items-center bg-white">
             <MaterialCommunityIcons name="check-circle" color="green" size={60} /> 
-                <Text>Email verification</Text>
-                <Text>Your email address was successfully verified.</Text>
+                <Text className="text-black">Email verification</Text>
+                <Text className="text-black">Your email address was successfully verified.</Text>
                 <TouchableOpacity
                     className="bg-[#2211cc] px-10 py-2 mt-4 rounded-lg"
                     // onPress={() => navigation.navigate('Login')} // make sure 'Login' is a screen in your stack

@@ -9,8 +9,8 @@ export const EmailVerifiedFail = ({ navigation }) => {
             marginTop: -headerHeight
         }} className="email-verified-main min-h-screen flex-1 py-4 justify-center items-center bg-white">
             <Entypo name="circle-with-cross" size={60} color="red" />
-                <Text>Email verification</Text>
-                <Text>Your email address was not yet verified.</Text>
+                <Text className="text-black">Email verification</Text>
+                <Text className="text-black">Your email address was not yet verified.</Text>
         </View>        
     )
 }

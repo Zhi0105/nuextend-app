@@ -54,7 +54,7 @@ export const EmailSendLink = () => {
         className="email-send-link-main min-h-screen flex-1 py-4 justify-center items-center bg-white">
             <View className="flex flex-col bg-blue-200 border-2 border-blue-400 p-4 rounded-lg mx-4">
                 <Text className="text-blue-500">Confirm Your Email Address</Text>
-                <Text>
+                <Text className="text-black">
                     A confirmation email has been sent to <Text className='font-bold text-blue-800'>{email}</Text> to verify your email address and activate your account.
                 </Text>
                 <Text className="mt-4">
