@@ -1,15 +1,22 @@
 import React from "react"
-import { createDrawerNavigator } from "@react-navigation/drawer"
+import useUserStore from "@_stores/auth";
 
+import { createDrawerNavigator } from "@react-navigation/drawer"
 import { DashboardStack } from "./Stack/DashboardStack"
 import { ProfileScreen } from "@_screens/Dashboard/ProfileScreen"
 import { EventScreen } from "@_screens/Dashboard/EventScreen"
 import { ScanQRScreen } from "@_screens/Dashboard/ScanQRScreen"
 import { LogoutScreen } from "@_screens/Dashboard/LogoutScreen"
+import _ from "lodash";
 
 export const DrawerNavigator = () => {
     const Drawer = createDrawerNavigator()
-    
+    const { user } = useUserStore((state) => ({ user: state.user }));
+
+    const hasOrganizationRole = () => {
+        return _.some(user?.organizations, item => [6, 7, 8].includes(item.pivot.role_id))
+    }
+
     return (
         <Drawer.Navigator
             initialRouteName="DashboardStack"
@@ -33,10 +40,12 @@ export const DrawerNavigator = () => {
                 name="UpcomingEvent" component={EventScreen}
                 options={{ drawerLabel: "Event" }}
             />
-            <Drawer.Screen 
-                name="Scanqr" component={ScanQRScreen}
-                options={{ drawerLabel: "ScanQR" }}
-            />
+            {hasOrganizationRole() && (
+                <Drawer.Screen 
+                    name="Scanqr" component={ScanQRScreen}
+                    options={{ drawerLabel: "ScanQR" }}
+                />
+            )}
             <Drawer.Screen name="Signout" component={LogoutScreen} />
         </Drawer.Navigator>
     )  

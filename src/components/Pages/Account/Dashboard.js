@@ -43,12 +43,12 @@ export const Dashboard = ({ navigation }) => {
     const events = useMemo(() => {
         if (!eventData) return [];
         const filtered = _.filter(eventData?.data?.data, (event) =>
-            [2].includes(event.event_status_id)
+            event?.is_posted
         );
         if (!searchQuery) return filtered;
-        return filtered.filter(event =>
-            event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            event.description?.toLowerCase().includes(searchQuery.toLowerCase())
+        return filtered?.filter(event =>
+            event?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            event?.description?.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [eventData, searchQuery]);
 

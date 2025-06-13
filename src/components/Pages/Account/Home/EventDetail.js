@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import useUserStore from '@_stores/auth';
 import useEventStore from '@_stores/event';
 import { Text, View, TouchableOpacity } from 'react-native'
@@ -15,7 +15,7 @@ export const EventDetail = ({ route, navigation }) => {
     const queryClient = useQueryClient();
     const { event } = route.params;
     const { user, token } = useUserStore((state) => ({ user: state.user, setUser: state.setUser, token: state.token }));
-    const { setUpcoming } = useEventStore((state) => ({ setUpcoming: state.setUpcoming }));
+    const { upcoming, setUpcoming } = useEventStore((state) => ({ upcoming: state.upcoming, setUpcoming: state.setUpcoming }));
     const { mutate: handleJoinEvent, isLoading: joinEventLoading} = useMutation({
         mutationFn: storeParticipant,
             onSuccess: (data) => {
@@ -48,6 +48,12 @@ export const EventDetail = ({ route, navigation }) => {
             event_id: event?.id,
         })
     }
+
+    const hasJoined = () => {
+        const isAlreadyJoined = _.some(upcoming, (item) => item.event_id === event?.id)
+        return isAlreadyJoined
+    }
+
 
     const setFormatDate = (date) => {
     // Assuming input is like '05-01-2025'
@@ -88,12 +94,12 @@ export const EventDetail = ({ route, navigation }) => {
                         <Text className='text-black text-lg capitalize'>{event?.description}</Text>
                     </View>
                     <TouchableOpacity
-                        disabled={joinEventLoading || _.some(user.organizations, { id: event?.organization_id })}
+                        disabled={joinEventLoading || _.some(user.organizations, { id: event?.organization_id }) || hasJoined()}
                         onPress={joinEvent} 
-                        className={` ${ joinEventLoading || _.some(user.organizations, { id: event?.organization_id }) ? "bg-gray-400" : 'bg-[#364190]'} w-full p-2 rounded-sm`}
+                        className={` ${ joinEventLoading || _.some(user.organizations, { id: event?.organization_id }) || hasJoined() ? "bg-gray-400" : 'bg-[#364190]'} w-full p-2 rounded-sm`}
                     >
                         <Text className='text-center text-white'>
-                            {joinEventLoading ? "Please wait..." : "Join"}  
+                            {joinEventLoading ? "Please wait..." : hasJoined() ? "already joined" : "Join"}  
                         </Text>
                     </TouchableOpacity>
                 </View>
