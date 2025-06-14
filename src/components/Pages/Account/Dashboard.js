@@ -52,6 +52,7 @@ export const Dashboard = ({ navigation }) => {
         );
     }, [eventData, searchQuery]);
 
+
     const CardHeader = ({ data }) => (
         <Text className="text-black text-lg font-bold p-2 capitalize px-4">
             {data?.name}
@@ -65,6 +66,19 @@ export const Dashboard = ({ navigation }) => {
                 <Text>Loading events...</Text>
             </View>
         );
+    }
+
+    if(!events?.length) {
+        return (
+            <View
+                style={{
+                    paddingBottom: headerHeight * 1.8
+                }} 
+                className="dashboard-main min-h-screen flex-1 py-4 justify-center items-center bg-white"
+            >
+                <Text>No event yet..</Text>
+            </View>
+        )
     }
 
     return (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useEventStore from '@_stores/event'
 import { useHeaderHeight } from "@react-navigation/elements";
 import { View, Text, TouchableOpacity, Image } from 'react-native'
@@ -23,8 +23,6 @@ export const Event = ({ navigation }) => {
             ? parsedDate.format('MMMM D, YYYY')
             : 'Invalid Date';
     };
-
-    
     const handleGenerateQR = (participant) => {
         RNQRGenerator.generate({
             value: `${JSON.stringify({
@@ -41,7 +39,6 @@ export const Event = ({ navigation }) => {
         .catch(error => console.log('Cannot create QR code', error));
     }
 
-    
     if(!upcoming?.length) {
         return (
             <View className="event-main min-h-screen flex-1 py-4 items-center bg-white">
@@ -50,7 +47,7 @@ export const Event = ({ navigation }) => {
         )
     }
 
-    
+
     return (
         <View className="event-main min-h-screen flex-1 py-4 items-center bg-white">
             <Modal

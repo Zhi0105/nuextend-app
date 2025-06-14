@@ -48,13 +48,10 @@ export const EventDetail = ({ route, navigation }) => {
             event_id: event?.id,
         })
     }
-
     const hasJoined = () => {
         const isAlreadyJoined = _.some(upcoming, (item) => item.event_id === event?.id)
         return isAlreadyJoined
     }
-
-
     const setFormatDate = (date) => {
     // Assuming input is like '05-01-2025'
     const parsedDate = dayjs(date, 'MM-DD-YYYY');
@@ -85,7 +82,49 @@ export const EventDetail = ({ route, navigation }) => {
                         <Text className='text-black text-lg font-bold'>End date:</Text>
                         <Text className='text-black break-normal text-lg'>{setFormatDate(event?.end_date)}</Text>
                     </View>
+                    <View className='flex gap-2 px-4'>
+                        <Text className='text-black text-lg font-bold'>Skills:</Text>
+                        {event?.skills.map((item, index) => {
+                            return (    
+                                <Text
+                                    className='text-black text-lg indent-10'
+                                    key={index}>
+                                        - {item?.name}
+                                </Text>
+                            )
+                        })}
+                    </View>
                     <View className='flex-row gap-2 px-4'>
+                        <Text className='text-black text-lg font-bold'>Created by:</Text>
+                        <Text className='text-black break-normal text-lg capitalize'>
+                            {event?.user.lastname}, {event?.user.firstname} {event?.user.middlename}
+                        </Text>
+                    </View>
+                    <View className='flex-row gap-2 px-4'>
+                        <Text className='text-black text-lg font-bold'>Organization:</Text>
+                        <Text className='text-black break-normal text-lg capitalize'>
+                            {event?.organization.name}
+                        </Text>
+                    </View>
+                    <View className='flex gap-2 px-4'>
+                        <Text className='text-black text-lg font-bold'>Department:</Text>
+                        <Text className='text-black break-normal text-lg capitalize'>
+                            {event?.user.department.name}
+                        </Text>
+                    </View>
+                    <View className='flex gap-2 px-4'>
+                        <Text className='text-black text-lg font-bold'>Program:</Text>
+                        <Text className='text-black break-normal text-lg capitalize'>
+                            {event?.user.program.name}
+                        </Text>
+                    </View>
+                    <View className='flex-row gap-2 px-4'>
+                        <Text className='text-black text-lg font-bold'>Date Creation:</Text>
+                        <Text className='text-black break-normal text-lg capitalize'>
+                            {dayjs(event?.created_at).format("MMMM D, YYYY")}
+                        </Text>
+                    </View>
+                    <View className='flex gap-2 px-4'>
                         <Text className='text-black text-lg font-bold'>Address:</Text>
                         <Text className='text-black break-normal text-lg capitalize'>{event?.address}</Text>
                     </View>
@@ -93,6 +132,7 @@ export const EventDetail = ({ route, navigation }) => {
                         <Text className='text-black text-lg font-bold'>Description:</Text>
                         <Text className='text-black text-lg capitalize'>{event?.description}</Text>
                     </View>
+                
                     <TouchableOpacity
                         disabled={joinEventLoading || _.some(user.organizations, { id: event?.organization_id }) || hasJoined()}
                         onPress={joinEvent} 
