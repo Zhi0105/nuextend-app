@@ -6,144 +6,134 @@ import { Card } from '@ui-kitten/components';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { showMessage } from "react-native-flash-message";
 import { storeParticipant } from '@_services/participant';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 
 export const EventDetail = ({ route, navigation }) => {
-    dayjs.extend(customParseFormat);
     const queryClient = useQueryClient();
-    const { event } = route.params;
+    const { event } = route.params || {};
     const { user, token } = useUserStore((state) => ({ user: state.user, setUser: state.setUser, token: state.token }));
     const { upcoming, setUpcoming } = useEventStore((state) => ({ upcoming: state.upcoming, setUpcoming: state.setUpcoming }));
-    const { mutate: handleJoinEvent, isLoading: joinEventLoading} = useMutation({
+
+    const { mutate: handleJoinEvent, isLoading: joinEventLoading } = useMutation({
         mutationFn: storeParticipant,
-            onSuccess: (data) => {
-                navigation.navigate("Dashboard")
-                setUpcoming(data?.upcoming_events)
-                queryClient.invalidateQueries({ queryKey: ['join-event'] });
-                showMessage({
-                message: "successfully joined",
+        onSuccess: (data) => {
+            navigation.navigate("Dashboard");
+            setUpcoming(data?.upcoming_events || []);
+            queryClient.invalidateQueries({ queryKey: ['join-event'] });
+            showMessage({
+                message: "Successfully joined",
                 type: 'success',
                 duration: 1000,
                 floating: true,
                 position: 'top',
-            })
-            }, 
-            onError: (err) => {  
+            });
+        },
+        onError: (err) => {
             showMessage({
-                message: err.response.data.message,
+                message: err?.response?.data?.message || "Failed to join event",
                 type: 'warning',
                 duration: 1000,
                 floating: true,
                 position: 'top',
-            })
-            },
+            });
+        },
     });
 
     const joinEvent = () => {
+        if (!user?.id || !event?.id) return;
         handleJoinEvent({
             token,
-            user_id: user?.id,
-            event_id: event?.id,
-        })
-    }
-    const hasJoined = () => {
-        const isAlreadyJoined = _.some(upcoming, (item) => item.event_id === event?.id)
-        return isAlreadyJoined
-    }
-    const setFormatDate = (date) => {
-    // Assuming input is like '05-01-2025'
-    const parsedDate = dayjs(date, 'MM-DD-YYYY');
-    return parsedDate.isValid()
-        ? parsedDate.format('MMMM D, YYYY')
-        : 'Invalid Date';
+            user_id: user.id,
+            event_id: event.id,
+        });
     };
 
+    const hasJoined = () => {
+        return _.some(upcoming, (item) => item.event_id === event?.id);
+    };
+
+    const setFormatDate = (date) => {
+        const parsed = dayjs(date);
+        return parsed.isValid() ? parsed.format('MMMM D, YYYY') : 'Invalid Date';
+    };
+
+    if (!event) {
+        return (
+            <View className="flex-1 items-center justify-center bg-white">
+                <Text className="text-lg text-gray-600">No event data available.</Text>
+            </View>
+        );
+    }
+
+    const isOrgUser = _.some(user.organizations, { id: event?.organization_id });
+    const joinDisabled = joinEventLoading || isOrgUser || hasJoined();
+
     return (
-        <View 
-            className="w-full event-detail-main min-h-screen flex-1 py-4 items-center bg-white px-4"
-        >
-            <Card className='w-full px-4'>
-                <Text className='text-gray-500 text-2xl font-bold'>
+        <View className="w-full event-detail-main min-h-screen flex-1 py-4 items-center bg-white px-4">
+            <Card className="w-full px-4">
+                <Text className="text-gray-500 text-2xl font-bold">
                     Event Details:
                 </Text>
 
-                <View className='detail flex-col gap-2 mt-4'>
-                    <View className='flex-row gap-2 px-4'>
-                        <Text className='text-black text-lg font-bold'>Name:</Text>
-                        <Text className='text-black break-normal text-lg capitalize'>{event?.name}</Text>
+                <View className="detail flex-col gap-2 mt-4">
+                    <Info label="Name" value={event?.name} />
+                    <Info label="Start date" value={setFormatDate(event?.start_date)} />
+                    <Info label="End date" value={setFormatDate(event?.end_date)} />
+                    <View className="flex gap-2 px-4">
+                        <Text className="text-black text-lg font-bold">Skills:</Text>
+                        {(Array.isArray(event?.skills) && event.skills.length > 0)
+                            ? event.skills.map((item, idx) => (
+                                <Text className="text-black text-lg indent-10" key={idx}>- {item?.name}</Text>
+                            ))
+                            : <Text className="text-black text-lg italic ml-2">No skills listed</Text>}
                     </View>
-                    <View className='flex-row gap-2 px-4'>
-                        <Text className='text-black text-lg font-bold'>Start date:</Text>
-                        <Text className='text-black break-normal text-lg'>{setFormatDate(event?.start_date)}</Text>
+                    <Info label="Created by" value={`${event?.user?.lastname}, ${event?.user?.firstname} ${event?.user?.middlename}`} />
+                    <Info label="Date Creation" value={dayjs(event?.created_at).format('MMMM D, YYYY')} />
+                    <View className="flex-col gap-2 px-4">
+                        <Text className="text-black text-lg font-bold">Organization:</Text>
+                        <Text className="text-black text-lg capitalize">{event?.organization?.name}</Text>
                     </View>
-                    <View className='flex-row gap-2 px-4'>
-                        <Text className='text-black text-lg font-bold'>End date:</Text>
-                        <Text className='text-black break-normal text-lg'>{setFormatDate(event?.end_date)}</Text>
+                    <View className="flex-col gap-2 px-4">
+                        <Text className="text-black text-lg font-bold">Department:</Text>
+                        <Text className="text-black text-lg capitalize">{event?.user?.department?.name}</Text>
                     </View>
-                    <View className='flex gap-2 px-4'>
-                        <Text className='text-black text-lg font-bold'>Skills:</Text>
-                        {event?.skills.map((item, index) => {
-                            return (    
-                                <Text
-                                    className='text-black text-lg indent-10'
-                                    key={index}>
-                                        - {item?.name}
-                                </Text>
-                            )
-                        })}
+                    <View className="flex-col gap-2 px-4">
+                        <Text className="text-black text-lg font-bold">Program:</Text>
+                        <Text className="text-black text-lg capitalize">{event?.user?.program?.name}</Text>
                     </View>
-                    <View className='flex-row gap-2 px-4'>
-                        <Text className='text-black text-lg font-bold'>Created by:</Text>
-                        <Text className='text-black break-normal text-lg capitalize'>
-                            {event?.user.lastname}, {event?.user.firstname} {event?.user.middlename}
-                        </Text>
+                    <View className="flex-col gap-2 px-4">
+                        <Text className="text-black text-lg font-bold">Address:</Text>
+                        <Text className="text-black text-lg capitalize">{event?.address}</Text>
                     </View>
-                    <View className='flex-row gap-2 px-4'>
-                        <Text className='text-black text-lg font-bold'>Organization:</Text>
-                        <Text className='text-black break-normal text-lg capitalize'>
-                            {event?.organization.name}
-                        </Text>
+                    <View className="flex-col gap-2 px-4">
+                        <Text className="text-black text-lg font-bold">Description:</Text>
+                        <Text className="text-black text-lg capitalize">{event?.description}</Text>
                     </View>
-                    <View className='flex gap-2 px-4'>
-                        <Text className='text-black text-lg font-bold'>Department:</Text>
-                        <Text className='text-black break-normal text-lg capitalize'>
-                            {event?.user.department.name}
-                        </Text>
-                    </View>
-                    <View className='flex gap-2 px-4'>
-                        <Text className='text-black text-lg font-bold'>Program:</Text>
-                        <Text className='text-black break-normal text-lg capitalize'>
-                            {event?.user.program.name}
-                        </Text>
-                    </View>
-                    <View className='flex-row gap-2 px-4'>
-                        <Text className='text-black text-lg font-bold'>Date Creation:</Text>
-                        <Text className='text-black break-normal text-lg capitalize'>
-                            {dayjs(event?.created_at).format("MMMM D, YYYY")}
-                        </Text>
-                    </View>
-                    <View className='flex gap-2 px-4'>
-                        <Text className='text-black text-lg font-bold'>Address:</Text>
-                        <Text className='text-black break-normal text-lg capitalize'>{event?.address}</Text>
-                    </View>
-                    <View className='flex-col gap-2 px-4'>
-                        <Text className='text-black text-lg font-bold'>Description:</Text>
-                        <Text className='text-black text-lg capitalize'>{event?.description}</Text>
-                    </View>
-                
+
                     <TouchableOpacity
-                        disabled={joinEventLoading || _.some(user.organizations, { id: event?.organization_id }) || hasJoined()}
-                        onPress={joinEvent} 
-                        className={` ${ joinEventLoading || _.some(user.organizations, { id: event?.organization_id }) || hasJoined() ? "bg-gray-400" : 'bg-[#364190]'} w-full p-2 rounded-sm`}
+                        disabled={joinDisabled}
+                        onPress={joinEvent}
+                        className={`${joinDisabled ? "bg-gray-400" : 'bg-[#364190]'} w-full p-2 rounded-sm`}
                     >
-                        <Text className='text-center text-white'>
-                            {joinEventLoading ? "Please wait..." : hasJoined() ? "already joined" : "Join"}  
+                        <Text className="text-center text-white">
+                            {joinEventLoading
+                                ? "Please wait..."
+                                : hasJoined()
+                                    ? "Already joined"
+                                    : "Join"}
                         </Text>
                     </TouchableOpacity>
                 </View>
             </Card>
         </View>
-    )
-}
+    );
+};
+
+// Reusable info row
+const Info = ({ label, value }) => (
+    <View className="flex-row gap-2 px-4">
+        <Text className="text-black text-lg font-bold">{label}:</Text>
+        <Text className="text-black break-normal text-lg capitalize">{value || 'N/A'}</Text>
+    </View>
+);
