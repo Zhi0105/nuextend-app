@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
 import { DashboardScreen } from "@_screens/Dashboard/DashboardScreen"
 import { EventDetailScreen } from "@_screens/Dashboard/Home/EventDetailScreen"
+import { ActivityDetailScreen } from "@_screens/Dashboard/Home/ActivityDetailScreen"
 
 export const DashboardStack = () => {
     const Stack = createNativeStackNavigator()
@@ -20,6 +21,12 @@ export const DashboardStack = () => {
             />
             <Stack.Screen  
                 name="Event" component={EventDetailScreen} 
+                options={{
+                    animation:'slide_from_right'
+                }}
+            />
+            <Stack.Screen  
+                name="Activity" component={ActivityDetailScreen} 
                 options={{
                     animation:'slide_from_right'
                 }}

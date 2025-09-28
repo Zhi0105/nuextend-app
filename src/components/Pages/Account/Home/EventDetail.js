@@ -1,8 +1,9 @@
 import React from 'react'
 import useUserStore from '@_stores/auth';
 import useEventStore from '@_stores/event';
+import { useHeaderHeight } from "@react-navigation/elements";
 import { Text, View, TouchableOpacity } from 'react-native'
-import { Card } from '@ui-kitten/components';
+import { Card, List } from '@ui-kitten/components';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { showMessage } from "react-native-flash-message";
 import { storeParticipant } from '@_services/participant';
@@ -11,6 +12,7 @@ import _ from 'lodash';
 
 export const EventDetail = ({ route, navigation }) => {
     const queryClient = useQueryClient();
+    const headerHeight = useHeaderHeight();
     const { event } = route.params || {};
     const { user, token } = useUserStore((state) => ({ user: state.user, setUser: state.setUser, token: state.token }));
     const { upcoming, setUpcoming } = useEventStore((state) => ({ upcoming: state.upcoming, setUpcoming: state.setUpcoming }));
@@ -58,6 +60,14 @@ export const EventDetail = ({ route, navigation }) => {
         return parsed.isValid() ? parsed.format('MMMM D, YYYY') : 'Invalid Date';
     };
 
+    
+    const CardHeader = ({ data }) => (
+        <Text className="text-black text-lg font-bold p-2 capitalize px-4">
+            {data?.name}
+        </Text>
+    );
+
+
     if (!event) {
         return (
             <View className="flex-1 items-center justify-center bg-white">
@@ -68,6 +78,7 @@ export const EventDetail = ({ route, navigation }) => {
 
     const isOrgUser = _.some(user.organizations, { id: event?.organization_id });
     const joinDisabled = joinEventLoading || isOrgUser || hasJoined();
+
 
     return (
         <View className="w-full event-detail-main min-h-screen flex-1 py-4 items-center bg-white px-4">
@@ -94,22 +105,37 @@ export const EventDetail = ({ route, navigation }) => {
                         <Text className="text-black text-lg font-bold">Organization:</Text>
                         <Text className="text-black text-lg capitalize">{event?.organization?.name}</Text>
                     </View>
-                    <View className="flex-col gap-2 px-4">
-                        <Text className="text-black text-lg font-bold">Department:</Text>
-                        <Text className="text-black text-lg capitalize">{event?.user?.department?.name}</Text>
-                    </View>
-                    <View className="flex-col gap-2 px-4">
-                        <Text className="text-black text-lg font-bold">Program:</Text>
-                        <Text className="text-black text-lg capitalize">{event?.user?.program?.name}</Text>
-                    </View>
-                    <View className="flex-col gap-2 px-4">
-                        <Text className="text-black text-lg font-bold">Address:</Text>
-                        <Text className="text-black text-lg capitalize">{event?.address}</Text>
-                    </View>
-                    <View className="flex-col gap-2 px-4">
-                        <Text className="text-black text-lg font-bold">Description:</Text>
-                        <Text className="text-black text-lg capitalize">{event?.description}</Text>
-                    </View>
+
+                    {event?.activity.length > 0 ? (
+                        <List
+                            className="w-full"
+                            contentContainerStyle={{
+                                paddingHorizontal: 8,
+                                paddingVertical: 4,
+                                paddingBottom: headerHeight * 1.8
+                            }}
+                            data={event?.activity}
+                            keyExtractor={(item) => `${item.id}`}
+                            renderItem={({ item }) => (
+                                <Card
+                                    status="basic"
+                                    header={<CardHeader data={item} />}
+                                    onPress={() => navigation.navigate("Activity", { activity: item })}
+                                >
+                                    <Text className="text-black">{item.description}</Text>
+                                </Card>
+                            )}
+                        />
+                    ) : (
+                        <View
+                            style={{
+                                paddingBottom: headerHeight * 1.8
+                            }}
+                            className="flex-1 justify-center items-center w-full"
+                        >
+                            <Text>No activities yet..</Text>
+                        </View>
+                    )}
 
                     <TouchableOpacity
                         disabled={joinDisabled}

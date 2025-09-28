@@ -67,20 +67,7 @@ export const Dashboard = ({ navigation }) => {
             </View>
         );
     }
-
-    if(!events?.length) {
-        return (
-            <View
-                style={{
-                    paddingBottom: headerHeight * 1.8
-                }} 
-                className="dashboard-main min-h-screen flex-1 py-4 justify-center items-center bg-white"
-            >
-                <Text>No event yet..</Text>
-            </View>
-        )
-    }
-
+    
     return (
         <View className="dashboard-main min-h-screen flex-1 py-4 items-center bg-white">
             <TextInput
@@ -90,25 +77,42 @@ export const Dashboard = ({ navigation }) => {
                 onChangeText={setSearchQuery}
                 className="border text-black border-gray-300 rounded-md p-2 mb-4 w-[95%]"
             />
-            <List
-                className="min-h-full w-full"
-                contentContainerStyle={{
-                    paddingHorizontal: 8,
-                    paddingVertical: 4,
-                    paddingBottom: headerHeight * 1.8
-                }}
-                data={events}
-                keyExtractor={(item) => `${item.id}`}
-                renderItem={({ item }) => (
-                    <Card
-                        status="basic"
-                        header={<CardHeader data={item} />}
-                        onPress={() => navigation.navigate("Event", { event: item })}
-                    >
-                        <Text className="text-black">{item.description}</Text>
-                    </Card>
-                )}
-            />
+                {events?.length > 0 ? (
+                <List
+                    className="min-h-full w-full"
+                    contentContainerStyle={{
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        paddingBottom: headerHeight * 1.8
+                    }}
+                    data={events}
+                    keyExtractor={(item) => `${item.id}`}
+                    renderItem={({ item }) => (
+                        <Card
+                            status="basic"
+                            header={<CardHeader data={item} />}
+                            onPress={() => navigation.navigate("Event", { event: item })}
+                        >
+                            <Text className="text-black">
+                                Budget:{" "}
+                                {new Intl.NumberFormat("en-PH", {
+                                style: "currency",
+                                currency: "PHP",
+                                }).format(item.budget_proposal)}
+                            </Text>
+                        </Card>
+                    )}
+                />
+            ) : (
+                <View
+                    style={{
+                        paddingBottom: headerHeight * 1.8
+                    }}
+                    className="flex-1 justify-center items-center w-full"
+                >
+                    <Text>No event yet..</Text>
+                </View>
+            )}
         </View>
     );
 };
