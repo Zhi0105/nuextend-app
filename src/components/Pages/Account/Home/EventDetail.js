@@ -60,7 +60,12 @@ export const EventDetail = ({ route, navigation }) => {
   };
 
   const hasJoined = () => _.some(upcoming, (item) => item.event_id === event?.id);
- 
+  const setFormatDate = (date) => {
+    if (!date) return 'N/A';
+    const parsed = dayjs(date, ["MM-DD-YYYY", "YYYY-MM-DD", "MM/DD/YYYY"]);
+    return parsed.isValid() ? parsed.format('MMMM D, YYYY') : 'Invalid Date';
+  };
+
   if (!event) {
     return (
       <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -71,35 +76,6 @@ export const EventDetail = ({ route, navigation }) => {
 
   const isOrgUser = _.some(user.organizations, { id: event?.organization_id });
   const joinDisabled = joinEventLoading || isOrgUser || hasJoined();
-  const setFormatDate = (date) => {
-    if (!date) return 'N/A';
-
-    // Handle numbers or timestamps
-    if (typeof date === 'number') {
-      const parsed = dayjs.unix(date);
-      return parsed.isValid() ? parsed.format('MMMM D, YYYY') : 'Invalid Date';
-    }
-
-    // Clean up any accidental "null" or weird strings
-    const cleanDate = String(date).trim();
-
-    // Try multiple formats
-    const parsed = dayjs(cleanDate, [
-      "YYYY-MM-DD",
-      "MM-DD-YYYY",
-      "MM/DD/YYYY",
-      "YYYY/MM/DD",
-      "DD-MM-YYYY",
-    ], true);
-
-    // Fallback if invalid (e.g. ISO or timestamp string)
-    if (!parsed.isValid()) {
-      const isoParsed = dayjs(cleanDate);
-      return isoParsed.isValid() ? isoParsed.format('MMMM D, YYYY') : 'Invalid Date';
-    }
-
-    return parsed.format('MMMM D, YYYY');
-  };
 
   const CardHeader = ({ title }) => (
     <View style={{ padding: 8 }}>
@@ -128,6 +104,7 @@ const renderListItem = ({ item }, type) => {
   );
 };
 
+  event && console.log(event)
 
   return (
     <Layout style={{ flex: 1, padding: 16 }}>
@@ -147,8 +124,7 @@ const renderListItem = ({ item }, type) => {
 
 
         <View style={{ marginTop: 12 }}>
-          <Info label='Start Date' value={setFormatDate(event?.implement_date)} />
-          <Info label='End Date' value={setFormatDate(event?.model_id === 3 ? event?.activity[event?.activity.length - 1].end_date : event?.activity[0].end_date)} />
+          <Info label='Implement Date' value={setFormatDate(event?.implement_date)} />
           <Info label='Created by' value={`${event?.user?.lastname}, ${event?.user?.firstname}`} />
           <Info label='Organization' value={event?.organization?.name} />
         </View>
