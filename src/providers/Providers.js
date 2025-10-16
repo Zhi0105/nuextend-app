@@ -1,14 +1,14 @@
 import React from "react";
 import { Routes } from "@_navigation/Routes"
-import { Linking } from "react-native";
 import { NavigationContainer, useNavigationContainerRef } from "@react-navigation/native"
 import FlashMessage from 'react-native-flash-message'
 
 import { TanstackProviders } from "./TanstackProviders";
-import { ApplicationProvider } from "@ui-kitten/components";
+import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import { AuthProviders } from "./AuthProviders";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as eva from '@eva-design/eva';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 
 const linking = {
   prefixes: ['nuextend://'],
@@ -24,6 +24,7 @@ export const Providers = () => {
     const navigationRef = useNavigationContainerRef();
     return ( 
       <React.Fragment>
+        <IconRegistry icons={EvaIconsPack} />
         <NavigationContainer ref={navigationRef} linking={linking}>
           <ApplicationProvider {...eva} theme={eva.light}>
             <TanstackProviders>

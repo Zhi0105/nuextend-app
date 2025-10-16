@@ -1,165 +1,176 @@
-import React from 'react'
-import useUserStore from '@_stores/auth';
-import useEventStore from '@_stores/event';
-import { useHeaderHeight } from "@react-navigation/elements";
-import { Text, View, TouchableOpacity } from 'react-native'
-import { Card, List } from '@ui-kitten/components';
+import React from 'react';
+import { View } from 'react-native';
+import { Layout, Text, Card, List, Button, Divider, Icon } from '@ui-kitten/components';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { showMessage } from "react-native-flash-message";
-import { storeParticipant } from '@_services/participant';
+import { useHeaderHeight } from '@react-navigation/elements';
+import { showMessage } from 'react-native-flash-message';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 
+import useUserStore from '@_stores/auth';
+import useEventStore from '@_stores/event';
+import { storeParticipant } from '@_services/participant';
+
 export const EventDetail = ({ route, navigation }) => {
-    const queryClient = useQueryClient();
-    const headerHeight = useHeaderHeight();
-    const { event } = route.params || {};
-    const { user, token } = useUserStore((state) => ({ user: state.user, setUser: state.setUser, token: state.token }));
-    const { upcoming, setUpcoming } = useEventStore((state) => ({ upcoming: state.upcoming, setUpcoming: state.setUpcoming }));
+  const queryClient = useQueryClient();
+  const headerHeight = useHeaderHeight();
+  const { event } = route.params || {};
+  const { user, token } = useUserStore((state) => ({
+    user: state.user,
+    setUser: state.setUser,
+    token: state.token,
+  }));
+  const { upcoming, setUpcoming } = useEventStore((state) => ({
+    upcoming: state.upcoming,
+    setUpcoming: state.setUpcoming,
+  }));
 
-    const { mutate: handleJoinEvent, isLoading: joinEventLoading } = useMutation({
-        mutationFn: storeParticipant,
-        onSuccess: (data) => {
-            navigation.navigate("Dashboard");
-            setUpcoming(data?.upcoming_events || []);
-            queryClient.invalidateQueries({ queryKey: ['join-event'] });
-            showMessage({
-                message: "Successfully joined",
-                type: 'success',
-                duration: 1000,
-                floating: true,
-                position: 'top',
-            });
-        },
-        onError: (err) => {
-            showMessage({
-                message: err?.response?.data?.message || "Failed to join event",
-                type: 'warning',
-                duration: 1000,
-                floating: true,
-                position: 'top',
-            });
-        },
+  const { mutate: handleJoinEvent, isLoading: joinEventLoading } = useMutation({
+    mutationFn: storeParticipant,
+    onSuccess: (data) => {
+      navigation.navigate('Dashboard');
+      setUpcoming(data?.upcoming_events || []);
+      queryClient.invalidateQueries({ queryKey: ['join-event'] });
+      showMessage({
+        message: 'Successfully joined',
+        type: 'success',
+        duration: 1000,
+        floating: true,
+        position: 'top',
+      });
+    },
+    onError: (err) => {
+      showMessage({
+        message: err?.response?.data?.message || 'Failed to join event',
+        type: 'warning',
+        duration: 1000,
+        floating: true,
+        position: 'top',
+      });
+    },
+  });
+
+  const joinEvent = () => {
+    if (!user?.id || !event?.id) return;
+    handleJoinEvent({
+      token,
+      user_id: user.id,
+      event_id: event.id,
     });
+  };
 
-    const joinEvent = () => {
-        if (!user?.id || !event?.id) return;
-        handleJoinEvent({
-            token,
-            user_id: user.id,
-            event_id: event.id,
-        });
-    };
+  const hasJoined = () => _.some(upcoming, (item) => item.event_id === event?.id);
+  const setFormatDate = (date) => dayjs(date).isValid() ? dayjs(date).format('MMMM D, YYYY') : 'Invalid Date';
 
-    const hasJoined = () => {
-        return _.some(upcoming, (item) => item.event_id === event?.id);
-    };
-
-    const setFormatDate = (date) => {
-        const parsed = dayjs(date);
-        return parsed.isValid() ? parsed.format('MMMM D, YYYY') : 'Invalid Date';
-    };
-
-    
-    const CardHeader = ({ data }) => (
-        <Text className="text-black text-lg font-bold p-2 capitalize px-4">
-            {data?.name}
-        </Text>
-    );
-
-
-    if (!event) {
-        return (
-            <View className="flex-1 items-center justify-center bg-white">
-                <Text className="text-lg text-gray-600">No event data available.</Text>
-            </View>
-        );
-    }
-
-    const isOrgUser = _.some(user.organizations, { id: event?.organization_id });
-    const joinDisabled = joinEventLoading || isOrgUser || hasJoined();
-
-
+  if (!event) {
     return (
-        <View className="w-full event-detail-main min-h-screen flex-1 py-4 items-center bg-white px-4">
-            <Card className="w-full px-4">
-                <Text className="text-gray-500 text-2xl font-bold">
-                    Event Details:
-                </Text>
-
-                <View className="detail flex-col gap-2 mt-4">
-                    <Info label="Name" value={event?.name} />
-                    <Info label="Start date" value={setFormatDate(event?.start_date)} />
-                    <Info label="End date" value={setFormatDate(event?.end_date)} />
-                    <View className="flex gap-2 px-4">
-                        <Text className="text-black text-lg font-bold">Skills:</Text>
-                        {(Array.isArray(event?.skills) && event.skills.length > 0)
-                            ? event.skills.map((item, idx) => (
-                                <Text className="text-black text-lg indent-10" key={idx}>- {item?.name}</Text>
-                            ))
-                            : <Text className="text-black text-lg italic ml-2">No skills listed</Text>}
-                    </View>
-                    <Info label="Created by" value={`${event?.user?.lastname}, ${event?.user?.firstname} ${event?.user?.middlename}`} />
-                    <Info label="Date Creation" value={dayjs(event?.created_at).format('MMMM D, YYYY')} />
-                    <View className="flex-col gap-2 px-4">
-                        <Text className="text-black text-lg font-bold">Organization:</Text>
-                        <Text className="text-black text-lg capitalize">{event?.organization?.name}</Text>
-                    </View>
-
-                    {event?.activity.length > 0 ? (
-                        <List
-                            className="w-full"
-                            contentContainerStyle={{
-                                paddingHorizontal: 8,
-                                paddingVertical: 4,
-                                paddingBottom: headerHeight * 1.8
-                            }}
-                            data={event?.activity}
-                            keyExtractor={(item) => `${item.id}`}
-                            renderItem={({ item }) => (
-                                <Card
-                                    status="basic"
-                                    header={<CardHeader data={item} />}
-                                    onPress={() => navigation.navigate("Activity", { activity: item })}
-                                >
-                                    <Text className="text-black">{item.description}</Text>
-                                </Card>
-                            )}
-                        />
-                    ) : (
-                        <View
-                            style={{
-                                paddingBottom: headerHeight * 1.8
-                            }}
-                            className="flex-1 justify-center items-center w-full"
-                        >
-                            <Text>No activities yet..</Text>
-                        </View>
-                    )}
-
-                    <TouchableOpacity
-                        disabled={joinDisabled}
-                        onPress={joinEvent}
-                        className={`${joinDisabled ? "bg-gray-400" : 'bg-[#364190]'} w-full p-2 rounded-sm`}
-                    >
-                        <Text className="text-center text-white">
-                            {joinEventLoading
-                                ? "Please wait..."
-                                : hasJoined()
-                                    ? "Already joined"
-                                    : "Join"}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </Card>
-        </View>
+      <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text category='h6' appearance='hint'>No event data available.</Text>
+      </Layout>
     );
+  }
+
+  const isOrgUser = _.some(user.organizations, { id: event?.organization_id });
+  const joinDisabled = joinEventLoading || isOrgUser || hasJoined();
+
+  const CardHeader = ({ title }) => (
+    <View style={{ padding: 8 }}>
+      <Text category='s1' style={{ fontWeight: 'bold' }}>{title}</Text>
+    </View>
+  );
+
+  const renderListItem = ({ item }, type) => (
+    <Card
+      style={{ marginVertical: 6 }}
+      header={<CardHeader title={item?.name || item?.title} />}
+      onPress={() => navigation.navigate(type, { [type.toLowerCase()]: item })}
+    >
+      <Text>{item.body || item.description}</Text>
+    </Card>
+  );
+
+  return (
+    <Layout style={{ flex: 1, padding: 16 }}>
+      <Card>
+        <Text category='h5' style={{ marginBottom: 12, color: '#364190' }}>
+          {event?.name}
+        </Text>
+
+        <Divider />
+
+        <View style={{ marginTop: 12 }}>
+          <Info label='Start Date' value={setFormatDate(event?.start_date)} />
+          <Info label='End Date' value={setFormatDate(event?.end_date)} />
+          <Info label='Created by' value={`${event?.user?.lastname}, ${event?.user?.firstname}`} />
+          <Info label='Organization' value={event?.organization?.name} />
+        </View>
+
+        <Divider style={{ marginVertical: 16 }} />
+
+        <View>
+          <Text category='s1' style={{ fontWeight: 'bold', marginBottom: 8 }}>Skills</Text>
+          {Array.isArray(event?.skills) && event.skills.length > 0 ? (
+            event.skills.map((s, i) => (
+              <Text key={i} style={{ marginLeft: 12 }}>• {s.name}</Text>
+            ))
+          ) : (
+            <Text appearance='hint'>No skills listed</Text>
+          )}
+        </View>
+
+        <Divider style={{ marginVertical: 16 }} />
+
+        <Text category='s1' style={{ fontWeight: 'bold', marginBottom: 6 }}>Announcements</Text>
+        {event?.announcement?.length ? (
+          <List
+            data={event.announcement}
+            renderItem={(props) => renderListItem(props, 'Announcement')}
+            contentContainerStyle={{ paddingBottom: headerHeight * 1.5 }}
+          />
+        ) : (
+          <Text appearance='hint'>No announcements yet.</Text>
+        )}
+
+        <Divider style={{ marginVertical: 16 }} />
+
+        <Text category='s1' style={{ fontWeight: 'bold', marginBottom: 6 }}>Project</Text>
+        {event?.activity?.length ? (
+          <List
+            data={event.activity}
+            renderItem={(props) => renderListItem(props, 'Activity')}
+            contentContainerStyle={{ paddingBottom: headerHeight * 1.5 }}
+          />
+        ) : (
+          <Text appearance='hint'>No activities yet.</Text>
+        )}
+
+        <Divider style={{ marginVertical: 16 }} />
+
+        <Button
+          onPress={joinEvent}
+          disabled={joinDisabled}
+          accessoryLeft={(props) =>
+            joinEventLoading ? <Icon {...props} name='loader-outline' /> :
+              hasJoined() ? <Icon {...props} name='checkmark-circle-2-outline' /> :
+                <Icon {...props} name='person-add-outline' />}
+          appearance={joinDisabled ? 'outline' : 'filled'}
+          status={joinDisabled ? 'basic' : 'primary'}
+        >
+          {joinEventLoading
+            ? 'Joining...'
+            : hasJoined()
+              ? 'Already Joined'
+              : 'Join Event'}
+        </Button>
+      </Card>
+    </Layout>
+  );
 };
 
 // Reusable info row
 const Info = ({ label, value }) => (
-    <View className="flex-row gap-2 px-4">
-        <Text className="text-black text-lg font-bold">{label}:</Text>
-        <Text className="text-black break-normal text-lg capitalize">{value || 'N/A'}</Text>
-    </View>
+  <View style={{ flexDirection: 'row', marginVertical: 4 }}>
+    <Text style={{ fontWeight: 'bold', width: 120 }}>{label}:</Text>
+    <Text style={{ flexShrink: 1 }}>{value || 'N/A'}</Text>
+  </View>
 );

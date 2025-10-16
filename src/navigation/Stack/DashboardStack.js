@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { DashboardScreen } from "@_screens/Dashboard/DashboardScreen"
 import { EventDetailScreen } from "@_screens/Dashboard/Home/EventDetailScreen"
 import { ActivityDetailScreen } from "@_screens/Dashboard/Home/ActivityDetailScreen"
+import { AnnouncementDetailScreen } from "@_screens/Dashboard/Home/AnnouncementDetailScreen"
 
 export const DashboardStack = () => {
     const Stack = createNativeStackNavigator()
@@ -27,6 +28,12 @@ export const DashboardStack = () => {
             />
             <Stack.Screen  
                 name="Activity" component={ActivityDetailScreen} 
+                options={{
+                    animation:'slide_from_right'
+                }}
+            />
+            <Stack.Screen  
+                name="Announcement" component={AnnouncementDetailScreen} 
                 options={{
                     animation:'slide_from_right'
                 }}
