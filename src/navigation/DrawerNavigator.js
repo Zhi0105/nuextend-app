@@ -7,6 +7,7 @@ import _ from "lodash"
 
 import useUserStore from "@_stores/auth"
 import { DashboardStack } from "./Stack/DashboardStack"
+import { EventStack } from "./Stack/EventStack"
 import { ProfileScreen } from "@_screens/Dashboard/ProfileScreen"
 import { EventScreen } from "@_screens/Dashboard/EventScreen"
 import { ScanQRScreen } from "@_screens/Dashboard/ScanQRScreen"
@@ -62,7 +63,7 @@ export const DrawerNavigator = () => {
       />
       <Drawer.Screen
         name="UpcomingEvent"
-        component={EventScreen}
+        component={EventStack}
         options={{
           drawerLabel: "Event",
           drawerIcon: ({ color, size }) => <Icon name="event" color={color} size={size} />,

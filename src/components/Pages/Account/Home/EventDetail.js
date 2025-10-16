@@ -79,16 +79,26 @@ export const EventDetail = ({ route, navigation }) => {
     </View>
   );
 
-  const renderListItem = ({ item }, type) => (
+const renderListItem = ({ item }, type) => {
+  // ✂️ Truncate long descriptions
+  const truncatedText =
+    item?.body?.length > 120
+      ? `${item.body.slice(0, 120)}...`
+      : item?.body ||
+        (item?.description?.length > 120
+          ? `${item.description.slice(0, 120)}...`
+          : item?.description || "No details available.");
+
+  return (
     <Card
       style={{ marginVertical: 6 }}
       header={<CardHeader title={item?.name || item?.title} />}
       onPress={() => navigation.navigate(type, { [type.toLowerCase()]: item })}
     >
-      <Text>{item.body || item.description}</Text>
+      <Text>{truncatedText}</Text>
     </Card>
   );
-
+};
   return (
     <Layout style={{ flex: 1, padding: 16 }}>
       <Card>
@@ -97,6 +107,14 @@ export const EventDetail = ({ route, navigation }) => {
         </Text>
 
         <Divider />
+        <Text category='p' style={{ margin: 12, color: '#000000' }}>
+          {event?.description}
+        </Text>
+
+
+
+        <Divider />
+
 
         <View style={{ marginTop: 12 }}>
           <Info label='Start Date' value={setFormatDate(event?.start_date)} />
