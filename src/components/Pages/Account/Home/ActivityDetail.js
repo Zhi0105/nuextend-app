@@ -15,11 +15,35 @@ dayjs.extend(customParseFormat);
 export const ActivityDetail = ({ route }) => {
   const { activity } = route.params || {};
 
-  const setFormatDate = (date) => {
-    if (!date) return 'N/A';
-    const parsed = dayjs(date, ["MM-DD-YYYY", "YYYY-MM-DD", "MM/DD/YYYY"]);
+const setFormatDate = (date) => {
+  if (!date) return 'N/A';
+
+  // Handle numbers or timestamps
+  if (typeof date === 'number') {
+    const parsed = dayjs.unix(date);
     return parsed.isValid() ? parsed.format('MMMM D, YYYY') : 'Invalid Date';
-  };
+  }
+
+  // Clean up any accidental "null" or weird strings
+  const cleanDate = String(date).trim();
+
+  // Try multiple formats
+  const parsed = dayjs(cleanDate, [
+    "YYYY-MM-DD",
+    "MM-DD-YYYY",
+    "MM/DD/YYYY",
+    "YYYY/MM/DD",
+    "DD-MM-YYYY",
+  ], true);
+
+  // Fallback if invalid (e.g. ISO or timestamp string)
+  if (!parsed.isValid()) {
+    const isoParsed = dayjs(cleanDate);
+    return isoParsed.isValid() ? isoParsed.format('MMMM D, YYYY') : 'Invalid Date';
+  }
+
+  return parsed.format('MMMM D, YYYY');
+};
 
   return (
     <Layout style={{ flex: 1, backgroundColor: '#F9FAFB', padding: 16 }}>

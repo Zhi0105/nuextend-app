@@ -5,6 +5,7 @@ import useEventStore from '@_stores/event';
 import { useHeaderHeight } from "@react-navigation/elements";
 import RNQRGenerator from 'rn-qr-generator';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 
 export const Event = ({ navigation }) => {
   const headerHeight = useHeaderHeight();
@@ -88,10 +89,20 @@ export const Event = ({ navigation }) => {
         <Text category="s1" appearance="hint">
           Schedule:
         </Text>
-        <Text category="s1">{setFormatDate(item?.event.implement_date)}</Text>
+        <Text category="s1">
+          {_.isDate(new Date(item?.event.implement_date))
+            ? new Date(item?.event.implement_date).toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                })
+            : "No date available"}
+          </Text>
       </View>
     </Card>
   );
+  
 
   return (
     <View>
@@ -126,7 +137,16 @@ export const Event = ({ navigation }) => {
 
             <View>
                 <Text category="label" appearance="hint">Schedule:</Text>
-                <Text category="s1">{setFormatDate(selectedEvent?.implement_date)}</Text>
+                <Text category="s1">
+                {_.isDate(new Date(selectedEvent?.implement_date))
+                  ? new Date(selectedEvent?.implement_date).toLocaleDateString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      })
+                  : "No date available"}
+                </Text>
             </View>
 
                 <View style={{ marginBottom: 12 }}>
