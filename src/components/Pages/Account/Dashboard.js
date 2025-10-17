@@ -47,27 +47,42 @@ export const Dashboard = ({ navigation }) => {
   }, [participantEventData]);
 
   const events = useMemo(() => {
-    if (!eventData) return [];
-    const filtered = _.filter(eventData?.data?.data, (event) => event?.is_posted);
+  if (!eventData) return [];
 
-    let results = filtered;
-    if (searchQuery) {
-      results = results.filter(
-        (event) =>
-          event?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          event?.description?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
+  // ✅ Step 1: Filter only posted events
+  const filtered = _.filter(eventData?.data?.data, (event) => event?.is_posted);
 
-    const selectedSkill = skillData?.data?.[selectedSkillIndex.row];
-    if (selectedSkill && selectedSkill?.name !== "All") {
-      results = results.filter((event) =>
-        event?.skills?.some((skill) => skill.name === selectedSkill.name)
-      );
-    }
+  // ✅ Step 2: Apply search filter
+  let results = filtered;
+  if (searchQuery) {
+    results = results.filter(
+      (event) =>
+        event?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        event?.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
 
-    return results;
-  }, [eventData, searchQuery, selectedSkillIndex, skillData]);
+  // ✅ Step 3: Apply skill filter
+  const selectedSkill = skillData?.data?.[selectedSkillIndex.row];
+  if (selectedSkill && selectedSkill?.name !== "All") {
+    results = results.filter((event) =>
+      event?.skills?.some((skill) => skill.name === selectedSkill.name)
+    );
+  }
+
+  // ✅ Step 4: Sort events so that model_id = 4 (Emergency) comes first
+  results = _.orderBy(
+    results,
+    [
+      (event) => (event.model_id === 4 ? 0 : 1), // Emergency events first
+      "implement_date" // optional: next sort by date (soonest first)
+    ],
+    ["asc", "asc"]
+  );
+
+  return results;
+}, [eventData, searchQuery, selectedSkillIndex, skillData]);
+
 
   const CardHeader = ({ data }) => (
     <Text category="h6" style={{ textTransform: "capitalize", padding: 8 }}>
@@ -84,7 +99,7 @@ export const Dashboard = ({ navigation }) => {
     );
   }
 
-
+  
   return (
     <Layout style={{ flex: 1, padding: 16, backgroundColor: "white" }}>
       {/* 🔍 Search Bar */}
@@ -115,6 +130,14 @@ export const Dashboard = ({ navigation }) => {
           <SelectItem key={index} title={skill.name} />
         ))}
       </Select>
+
+      <Divider />
+
+      {events && _.some(events, { model_id: 4 }) && (
+        <Text className="my-4" style={{ fontWeight: "bold", fontSize: 24, color: "red" }}>
+          Emergency Event!!! 
+        </Text>
+      )}
 
       <Divider />
 
