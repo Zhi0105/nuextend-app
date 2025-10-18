@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "486387313703",
+    "project_id": "nuextendnotification",
+    "storage_bucket": "nuextendnotification.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486387313703:android:aeb36729a8d80a6f2b3202",
+        "android_client_info": {
+          "package_name": "com.nuextendapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCTfVxC7A-NasZIgv1vFOTM6LDVqyrLas"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
