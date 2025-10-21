@@ -50,3 +50,18 @@ export const UpdateUser = (payload) => {
 
     return result
 }
+export const getTotalHrsParticipation = (payload) => {
+    const { user_id } = payload
+    const headers = {
+        Authorization: `Bearer ${payload.token}`
+    }
+    const data = {
+        user_id
+    }
+
+    const result = apiClient.post(`api/v1/get-hours`, data, { headers }).then(res => {
+        return res.data
+    })
+
+    return result
+}

@@ -22,6 +22,7 @@ export const Event = ({ navigation }) => {
       : 'Invalid Date';
   };
 
+
   const handleGenerateQR = (participant) => {
     RNQRGenerator.generate({
       value: JSON.stringify({
@@ -57,7 +58,7 @@ export const Event = ({ navigation }) => {
       header={() => (
         <View style={{ padding: 12, backgroundColor: '#f5f6fa', borderTopLeftRadius: 12, borderTopRightRadius: 12 }}>
           <Text category="h6" style={{ textTransform: 'capitalize', color: '#222B45' }}>
-            {item?.event.name}
+            {item?.event?.name} 
           </Text>
         </View>
       )}
@@ -90,14 +91,9 @@ export const Event = ({ navigation }) => {
           Schedule:
         </Text>
         <Text category="s1">
-          {_.isDate(new Date(item?.event.implement_date))
-            ? new Date(item?.event.implement_date).toLocaleDateString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                })
-            : "No date available"}
+          {dayjs(item?.event?.implement_date).isValid()
+          ? dayjs(item?.event?.implement_date).format("dddd, MMMM D, YYYY")
+          : "No date available"}
           </Text>
       </View>
     </Card>
@@ -138,13 +134,8 @@ export const Event = ({ navigation }) => {
             <View>
                 <Text category="label" appearance="hint">Schedule:</Text>
                 <Text category="s1">
-                {_.isDate(new Date(selectedEvent?.implement_date))
-                  ? new Date(selectedEvent?.implement_date).toLocaleDateString("en-US", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      })
+                  {dayjs(selectedEvent?.implement_date).isValid()
+                  ? dayjs(selectedEvent?.implement_date).format("dddd, MMMM D, YYYY")
                   : "No date available"}
                 </Text>
             </View>
@@ -193,17 +184,23 @@ export const Event = ({ navigation }) => {
         </Modal>
 
         {/* Event List */}
-        <List
-            style={{ flex: 1 }}
-            contentContainerStyle={{
-            paddingHorizontal: 16,
-            paddingVertical: 12,
-            paddingBottom: headerHeight * 1.8,
-            }}
-            // data={upcoming}
-            data={upcoming.filter(item => item?.event?.event_status_id !== 2)} // ✅ filter out status_id 2
-            renderItem={renderEventItem}
-        />
+        {upcoming.filter(item => item?.event?.event_status_id !== 2)?.length >= 1 && (
+          <List
+              style={{ flex: 1 }}
+              contentContainerStyle={{
+              paddingHorizontal: 16,
+              paddingVertical: 12,
+              paddingBottom: headerHeight * 1.8,
+              }}
+              // data={upcoming}
+              data={upcoming.filter(item => item?.event?.event_status_id !== 2)} // ✅ filter out status_id 2
+              renderItem={renderEventItem}
+          /> 
+        )}
+
+          {upcoming.filter(item => item?.event?.event_status_id !== 2)?.length < 1 && (
+            <Text>No event to show</Text>
+        )}
         
         </Layout>
     </View>

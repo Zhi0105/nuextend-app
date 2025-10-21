@@ -188,8 +188,8 @@ export const Dashboard = ({ navigation }) => {
                         style={{ marginTop: 8, fontStyle: "italic" }}
                     >
                         Schedule:
-                        {_.isDate(new Date(item.implement_date))
-                        ? new Date(item.implement_date).toLocaleDateString("en-US", {
+                        {_.isDate(new Date(item?.implement_date))
+                        ? new Date(item?.implement_date).toLocaleDateString("en-US", {
                             weekday: "long",
                             year: "numeric",
                             month: "long",

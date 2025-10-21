@@ -19,7 +19,7 @@ export const ScanQR = () => {
             showMessage({
               message: "attendance signed",
               type: 'success',
-              duration: 1000,
+              duration: 5000,
               floating: true,
               position: 'top',
           })
@@ -28,7 +28,7 @@ export const ScanQR = () => {
         showMessage({
             message: err.response.data.message,
             type: 'warning',
-            duration: 1000,
+            duration: 5000,
             floating: true,
             position: 'top',
         })

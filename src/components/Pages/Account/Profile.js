@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, TouchableOpacity, ScrollView } from 'react-native'
 import { Layout, Text, Select, SelectItem, IndexPath, Button, Card, Divider } from '@ui-kitten/components';
 import { Controller, useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { showMessage } from "react-native-flash-message";
 import _ from 'lodash';
 import useUserStore from '@_stores/auth';
@@ -10,6 +10,7 @@ import { UpdateUser } from '@_services/authentications';
 import { getDepartments } from "@_src/services/department";
 import { getPrograms } from '@_services/program';
 import { getSkills } from '@_services/skill';
+import { getTotalHrsParticipation } from '@_services/authentications';
 
 export const Profile = () => {
   const queryClient = useQueryClient();
@@ -22,6 +23,22 @@ export const Profile = () => {
   const { data: departmentData } = getDepartments();
   const { data: programData } = getPrograms();
   const { data: skillData } = getSkills();
+
+  // 🔹 Fetch total hours
+  const { data: totalHrsData, isLoading: hrsLoading, error: hrsError } = useQuery({
+    queryKey: ['total-hours', user?.id],
+    queryFn: () => getTotalHrsParticipation({ user_id: user?.id, token }),
+    enabled: !!user?.id && !!token,
+    onError: (err) => {
+      showMessage({
+        message: err.response?.data?.message || "Failed to fetch total hours.",
+        type: 'danger',
+        duration: 1200,
+        floating: true,
+        position: 'top',
+      });
+    }
+  });
 
   const [isUpdate, setIsUpdate] = useState(false);
   const [selectedDept, setSelectedDept] = useState(new IndexPath());
@@ -118,6 +135,7 @@ export const Profile = () => {
   return (
     <Layout level='1' style={{ flex: 1, padding: 16 }}>
       <ScrollView showsVerticalScrollIndicator={false}>
+        {/* 🔹 Profile Information Card */}
         <Card style={{ borderRadius: 12, marginBottom: 12, paddingVertical: 12 }}>
           <Text category='h5' style={{ marginBottom: 10, color: '#364190' }}>
             Profile Information
@@ -130,10 +148,23 @@ export const Profile = () => {
           </Text>
           
           <Text appearance='hint' style={{ marginBottom: 8 }}>School Id: {user?.school_id}</Text>
+          <Text appearance='hint' style={{ marginBottom: 8 }}>Email: {user?.email}</Text>
 
-          <Text appearance='hint' style={{ marginBottom: 12 }}>email: {user?.email}</Text>
+          <Divider style={{ marginVertical: 8 }} />
+
+          {/* 🔹 Total Hours */}
+          {hrsLoading ? (
+            <Text appearance='hint'>Loading total hours...</Text>
+          ) : hrsError ? (
+            <Text status='danger' appearance='hint'>Unable to load participation hours</Text>
+          ) : (
+            <Text appearance='hint' style={{ marginBottom: 8 }}>
+              Total Hours of Participation: {totalHrsData?.total_hours ?? 0} hrs
+            </Text>
+          )}
         </Card>
 
+        {/* 🔹 Academic Info */}
         {!(user?.role_id === 2 || user?.role_id === 5) && (
           <Card style={{ borderRadius: 12, marginBottom: 12 }}>
             <Text category='h6' style={{ color: '#364190', marginBottom: 12 }}>
@@ -209,7 +240,7 @@ export const Profile = () => {
           </Card>
         )}
 
-        {/* Skills */}
+        {/* 🔹 Skills */}
         <Card style={{ borderRadius: 12, marginBottom: 16 }}>
           <Text category='h6' style={{ color: '#364190', marginBottom: 12 }}>Skills</Text>
           {isUpdate ? (
@@ -254,7 +285,7 @@ export const Profile = () => {
           )}
         </Card>
 
-        {/* Buttons */}
+        {/* 🔹 Buttons */}
         <Layout style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: 30 }}>
           {isUpdate ? (
             <>
